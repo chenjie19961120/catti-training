@@ -4,188 +4,108 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0f766e" />
-    <title>一级笔译训练</title>
+    <meta name="description" content="CATTI 一级笔译练习应用，支持模块化练习、普通练习、参考译文、解析和 AI 问答。" />
+    <title>一级笔译练习</title>
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="mobile-hero">
-        <div class="hero-copy">
-          <p class="eyebrow">CATTI Level 1</p>
-          <h1>一级笔译训练</h1>
-          <p class="hero-subtitle">打开就练：出题、作答、参考答案、错题复习，放进飞书手机端每天使用。</p>
-        </div>
-        <div class="score-row" aria-label="考试模型">
-          <div class="score-pill">
-            <strong>60</strong>
-            <span>翻译</span>
-          </div>
-          <div class="score-pill">
-            <strong>40</strong>
-            <span>审定稿</span>
-          </div>
-          <div class="score-pill">
-            <strong>180</strong>
-            <span>分钟</span>
-          </div>
-        </div>
+      <header class="hero">
+        <p class="eyebrow">CATTI Level 1</p>
+        <h1>一级笔译练习</h1>
+        <p>只保留练习本身：选模块、做题、看多版本参考译文和解析，有问题就整理给 AI。</p>
       </header>
 
-      <main class="content-stack">
-        <section class="panel practice-panel">
-          <div class="section-title">
+      <main>
+        <nav class="mode-switch" aria-label="练习模式">
+          <button id="moduleModeBtn" class="active" type="button">模块化练习</button>
+          <button id="normalModeBtn" type="button">普通练习</button>
+        </nav>
+
+        <section id="modulePanel" class="panel">
+          <div class="section-head">
             <div>
-              <p class="eyebrow">开始练习</p>
+              <p class="eyebrow">模块化练习</p>
+              <h2>选择一个能力模块</h2>
+            </div>
+          </div>
+          <div id="moduleGrid" class="module-grid"></div>
+        </section>
+
+        <section class="panel practice-panel">
+          <div class="section-head">
+            <div>
+              <p id="practiceType" class="eyebrow">练习</p>
               <h2 id="practiceTitle">加载中</h2>
             </div>
-            <span id="practiceMeta" class="badge"></span>
+            <span id="practiceTag" class="badge"></span>
           </div>
-          <div class="practice-tabs" id="practiceTabs"></div>
-          <div class="prompt-card">
-            <p class="prompt-label">题目</p>
-            <p id="practicePrompt" class="prompt-text"></p>
-          </div>
-          <div id="practiceInstruction" class="practice-instruction"></div>
-          <label class="answer-label">
+
+          <article class="prompt-card">
+            <p class="label">题目</p>
+            <p id="practicePrompt" class="prompt"></p>
+          </article>
+
+          <p id="practiceTask" class="task"></p>
+
+          <label class="answer-box">
             我的答案
-            <textarea id="answerInput" rows="7" placeholder="在这里完成译文、审定稿或分析..."></textarea>
+            <textarea id="answerInput" rows="8" placeholder="在这里作答。提交后会显示参考答案和解析。"></textarea>
           </label>
-          <div class="practice-actions">
-            <button id="newPracticeBtn" class="ghost-button" type="button">换一题</button>
-            <button id="submitPracticeBtn" class="primary-button" type="button">提交练习</button>
-          </div>
-          <div id="feedbackPanel" class="feedback-panel" hidden>
-            <div>
-              <p class="prompt-label">参考答案</p>
-              <p id="referenceAnswer" class="feedback-text"></p>
-            </div>
-            <div>
-              <p class="prompt-label">评分重点</p>
-              <ul id="rubricList" class="rubric-list"></ul>
-            </div>
+
+          <div class="actions">
+            <button id="nextExerciseBtn" class="ghost-button" type="button">换一题</button>
+            <button id="submitAnswerBtn" class="primary-button" type="button">看答案与解析</button>
           </div>
         </section>
 
-        <section class="panel today-panel">
-          <div class="section-title">
+        <section id="answerPanel" class="panel answer-panel" hidden>
+          <div class="section-head">
             <div>
-              <p class="eyebrow">今日训练</p>
-              <h2 id="todayTitle">加载中</h2>
+              <p class="eyebrow">参考与解析</p>
+              <h2>对照你的答案</h2>
             </div>
-            <span id="todayQuantity" class="badge"></span>
           </div>
-          <p id="todayExercise" class="lead"></p>
-          <div id="todayChecklist" class="checklist"></div>
+          <div id="referenceList" class="reference-list"></div>
+          <article class="analysis-card">
+            <p class="label">解析</p>
+            <p id="analysisText"></p>
+          </article>
         </section>
 
-        <section class="panel timer-panel">
-          <div class="section-title">
+        <section class="panel ai-panel">
+          <div class="section-head">
             <div>
-              <p class="eyebrow">限时训练</p>
-              <h2 id="timerDisplay">45:00</h2>
+              <p class="eyebrow">问 AI</p>
+              <h2>针对这道题提问</h2>
             </div>
           </div>
-          <div class="segmented" role="group" aria-label="选择计时长度">
-            <button data-minutes="45">45 分钟</button>
-            <button data-minutes="90">90 分钟</button>
-            <button data-minutes="180">180 分钟</button>
+          <textarea id="aiQuestionInput" rows="4" placeholder="例如：我的译文哪里不自然？为什么这里不能直译？"></textarea>
+          <div class="actions">
+            <button id="copyAiPromptBtn" class="ghost-button" type="button">复制问题</button>
+            <button id="askAiBtn" class="primary-button" type="button">发送给 AI</button>
           </div>
-          <button id="timerToggle" class="primary-button full-button">开始</button>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">
-            <div>
-              <p class="eyebrow">训练记录</p>
-              <h2>提交一次练习</h2>
-            </div>
-          </div>
-          <form id="sessionForm" class="session-form">
+          <details class="ai-settings">
+            <summary>AI 接口设置</summary>
             <label>
-              模块
-              <select id="moduleInput" required></select>
+              后端接口地址
+              <input id="aiEndpointInput" type="url" placeholder="例如：https://你的域名/api/ask" />
             </label>
-            <label>
-              标题
-              <input id="titleInput" type="text" placeholder="例如：政府工作报告节选英译汉" required />
-            </label>
-            <label>
-              得分
-              <input id="scoreInput" type="number" min="0" max="100" step="1" value="75" required />
-            </label>
-            <label>
-              错误类型
-              <select id="errorInput">
-                <option value="无">无</option>
-                <option value="待复盘">待复盘</option>
-                <option value="漏译">漏译</option>
-                <option value="误译">误译</option>
-                <option value="逻辑关系">逻辑关系</option>
-                <option value="术语不统一">术语不统一</option>
-                <option value="表达不自然">表达不自然</option>
-                <option value="文体不匹配">文体不匹配</option>
-                <option value="时态语态">时态语态</option>
-              </select>
-            </label>
-            <label class="wide">
-              复盘备注
-              <textarea id="noteInput" rows="4" placeholder="写下错误原因、修正译文或下次注意点"></textarea>
-            </label>
-            <button class="primary-button wide" type="submit">保存并加入复习队列</button>
-          </form>
+            <button id="saveEndpointBtn" class="ghost-button" type="button">保存接口</button>
+          </details>
+          <div id="aiAnswer" class="ai-answer" hidden></div>
         </section>
 
-        <section class="panel">
-          <div class="section-title">
+        <section class="panel history-panel">
+          <div class="section-head">
             <div>
-              <p class="eyebrow">复习系统</p>
-              <h2>到期复习</h2>
+              <p class="eyebrow">练习历史</p>
+              <h2>练过的题</h2>
             </div>
-            <span id="dueCount" class="badge"></span>
+            <span id="historyCount" class="badge">0 条</span>
           </div>
-          <div id="reviewList" class="list"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">
-            <div>
-              <p class="eyebrow">统计</p>
-              <h2>近期表现</h2>
-            </div>
-          </div>
-          <div id="stats" class="stats"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">
-            <div>
-              <p class="eyebrow">12 周路径</p>
-              <h2>通过导向训练</h2>
-            </div>
-          </div>
-          <div id="phaseList" class="phase-grid"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-title">
-            <div>
-              <p class="eyebrow">模块权重</p>
-              <h2>按考试能力重排</h2>
-            </div>
-          </div>
-          <div id="moduleList" class="module-grid"></div>
-        </section>
-
-        <section class="panel export-panel">
-          <div>
-            <p class="eyebrow">数据</p>
-            <h2>训练记录</h2>
-            <p class="lead">当前版本把记录保存在浏览器本地，后续可接飞书多维表格同步。</p>
-          </div>
-          <div class="export-actions">
-            <button id="exportBtn" class="ghost-button">导出 JSON</button>
-            <button id="resetBtn" class="danger-button">清空数据</button>
-          </div>
+          <div id="historyList" class="history-list"></div>
         </section>
       </main>
     </div>
