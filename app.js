@@ -135,12 +135,102 @@ const phases = [
   },
 ];
 
+const practiceTypes = [
+  { id: "translation", label: "翻译" },
+  { id: "revision", label: "审定稿" },
+  { id: "logic", label: "逻辑拆分" },
+  { id: "terms", label: "术语" },
+];
+
+const exercises = [
+  {
+    id: "translation-1",
+    type: "translation",
+    title: "政策文本英译汉",
+    module: "翻译实务主线",
+    level: "段落",
+    prompt:
+      "Public services should be made more accessible, especially in communities where older residents and migrant workers often face difficulties in obtaining timely information.",
+    instruction: "请译成自然、准确的中文，注意 especially 引出的补充重点。",
+    reference:
+      "应提高公共服务的可及性，尤其是在老年居民和外来务工人员往往难以及时获取信息的社区。",
+    rubric: ["信息完整，不漏译 older residents 和 migrant workers", "逻辑关系清楚，especially 不要处理成并列", "中文表达自然，避免“被使得更加可获得”"],
+  },
+  {
+    id: "translation-2",
+    type: "translation",
+    title: "科技文本汉译英",
+    module: "翻译实务主线",
+    level: "句段",
+    prompt:
+      "随着人工智能技术在医疗、教育和城市治理等领域的应用不断深入，数据安全和算法透明度也成为公众关注的重点。",
+    instruction: "请译成英文，注意“不断深入”和“公众关注的重点”的表达。",
+    reference:
+      "As artificial intelligence is applied more extensively in healthcare, education and urban governance, data security and algorithmic transparency have also become major public concerns.",
+    rubric: ["领域名称准确", "主句结构清楚", "data security 和 algorithmic transparency 表达统一"],
+  },
+  {
+    id: "revision-1",
+    type: "revision",
+    title: "审定稿：漏译与直译",
+    module: "审定稿专项",
+    level: "段落",
+    prompt:
+      "原文：地方政府应在推进基础设施建设的同时，充分评估项目的长期运营成本，避免重建设、轻管理。\n错误译文：Local governments should promote infrastructure construction and fully assess the long-term cost of projects.",
+    instruction: "请修改错误译文，并标注主要错误类型。",
+    reference:
+      "Local governments should fully assess the long-term operating costs of projects while advancing infrastructure development, so as to avoid prioritizing construction over management.\n主要错误：漏译“在……的同时”“避免重建设、轻管理”；long-term cost 应明确为 operating costs。",
+    rubric: ["补足漏译信息", "while / so as to 等逻辑衔接自然", "指出错误类型而不只是改句子"],
+  },
+  {
+    id: "revision-2",
+    type: "revision",
+    title: "审定稿：术语与语域",
+    module: "审定稿专项",
+    level: "句子",
+    prompt:
+      "原文：有关部门将进一步完善监管机制，保障平台经济规范健康发展。\n错误译文：Relevant departments will further perfect the supervision mechanism to guarantee the platform economy develops normally and healthily.",
+    instruction: "请修订译文，使其符合政策文本语域。",
+    reference:
+      "Relevant authorities will further improve the regulatory mechanism to ensure the sound and well-regulated development of the platform economy.\n主要错误：perfect 生硬；supervision mechanism 不如 regulatory mechanism；normally and healthily 不符合政策语域。",
+    rubric: ["术语更贴近政策文本", "避免中式搭配", "保留“规范健康发展”的双重含义"],
+  },
+  {
+    id: "logic-1",
+    type: "logic",
+    title: "逻辑拆分：让步关系",
+    module: "逻辑拆分",
+    level: "复合句",
+    prompt:
+      "Although the policy has helped reduce administrative costs, its effectiveness depends largely on whether local agencies can coordinate their data systems and share information in a timely manner.",
+    instruction: "请拆出主干、让步关系、条件/依赖关系，并写一句中文翻译骨架。",
+    reference:
+      "主干：its effectiveness depends largely on whether...\n让步：Although the policy has helped reduce administrative costs\n依赖条件：whether local agencies can coordinate their data systems and share information in a timely manner\n翻译骨架：尽管该政策有助于降低行政成本，但其成效在很大程度上取决于地方机构能否协调数据系统并及时共享信息。",
+    rubric: ["主干判断准确", "Although 让步关系明确", "whether 引导的依赖内容完整"],
+  },
+  {
+    id: "terms-1",
+    type: "terms",
+    title: "术语选择：治理类",
+    module: "术语管理",
+    level: "高频词",
+    prompt:
+      "请为以下词组选出或写出更合适的英文表达，并各造一个短句：基层治理、监管机制、高质量发展、公共服务均等化。",
+    instruction: "请给出术语译法，并用其中两个术语各写一个英文句子。",
+    reference:
+      "基层治理：community-level governance / primary-level governance\n监管机制：regulatory mechanism\n高质量发展：high-quality development\n公共服务均等化：equal access to public services / equalization of public services\n例句：A more effective regulatory mechanism is needed to protect consumer rights.",
+    rubric: ["术语准确且前后一致", "例句搭配自然", "能区分 governance、regulation、public services 的使用场景"],
+  },
+];
+
 const reviewIntervals = [1, 3, 7, 14, 30];
 const storageKey = "level-one-translation-training";
 
 const state = loadState();
 let timerSeconds = 45 * 60;
 let timerHandle = null;
+let currentPracticeType = "translation";
+let currentExercise = null;
 
 function loadState() {
   const raw = localStorage.getItem(storageKey);
@@ -215,6 +305,76 @@ function renderToday() {
     label.append(checkbox, text);
     container.append(label);
   });
+}
+
+function pickExercise(type = currentPracticeType) {
+  const pool = exercises.filter((exercise) => exercise.type === type);
+  const index = Math.floor(Math.random() * pool.length);
+  return pool[index];
+}
+
+function renderPracticeTabs() {
+  const tabs = document.querySelector("#practiceTabs");
+  tabs.innerHTML = practiceTypes
+    .map(
+      (type) => `
+        <button class="${type.id === currentPracticeType ? "active" : ""}" data-type="${type.id}" type="button">${type.label}</button>
+      `,
+    )
+    .join("");
+
+  tabs.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      currentPracticeType = button.dataset.type;
+      loadPractice();
+    });
+  });
+}
+
+function loadPractice() {
+  currentExercise = pickExercise();
+  document.querySelector("#practiceTitle").textContent = currentExercise.title;
+  document.querySelector("#practiceMeta").textContent = currentExercise.level;
+  document.querySelector("#practicePrompt").textContent = currentExercise.prompt;
+  document.querySelector("#practiceInstruction").textContent = currentExercise.instruction;
+  document.querySelector("#answerInput").value = "";
+  document.querySelector("#feedbackPanel").hidden = true;
+  renderPracticeTabs();
+}
+
+function submitPractice() {
+  const answer = document.querySelector("#answerInput").value.trim();
+  if (!answer) {
+    alert("先写下你的答案，再提交。");
+    return;
+  }
+
+  const createdAt = todayKey();
+  const session = {
+    id: makeId(),
+    createdAt,
+    module: currentExercise.module,
+    title: currentExercise.title,
+    score: 75,
+    errorType: "待复盘",
+    note: `题目：${currentExercise.prompt}\n我的答案：${answer}\n参考：${currentExercise.reference}`,
+    answer,
+    exerciseId: currentExercise.id,
+    reviews: reviewIntervals.map((interval) => ({
+      interval,
+      date: addDays(createdAt, interval),
+      done: false,
+    })),
+  };
+
+  state.sessions.unshift(session);
+  saveState();
+
+  document.querySelector("#referenceAnswer").textContent = currentExercise.reference;
+  document.querySelector("#rubricList").innerHTML = currentExercise.rubric.map((item) => `<li>${item}</li>`).join("");
+  document.querySelector("#feedbackPanel").hidden = false;
+  renderReviews();
+  renderStats();
 }
 
 function renderModules() {
@@ -467,7 +627,10 @@ function renderAll() {
 }
 
 document.querySelector("#sessionForm").addEventListener("submit", saveSession);
+document.querySelector("#newPracticeBtn").addEventListener("click", loadPractice);
+document.querySelector("#submitPracticeBtn").addEventListener("click", submitPractice);
 document.querySelector("#exportBtn").addEventListener("click", exportData);
 document.querySelector("#resetBtn").addEventListener("click", resetData);
 setupTimer();
+loadPractice();
 renderAll();

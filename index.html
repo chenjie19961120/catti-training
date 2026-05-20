@@ -13,7 +13,7 @@
         <div class="hero-copy">
           <p class="eyebrow">CATTI Level 1</p>
           <h1>一级笔译训练</h1>
-          <p class="hero-subtitle">翻译、审定稿、复习和限时训练，放进飞书手机端每天使用。</p>
+          <p class="hero-subtitle">打开就练：出题、作答、参考答案、错题复习，放进飞书手机端每天使用。</p>
         </div>
         <div class="score-row" aria-label="考试模型">
           <div class="score-pill">
@@ -32,6 +32,40 @@
       </header>
 
       <main class="content-stack">
+        <section class="panel practice-panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">开始练习</p>
+              <h2 id="practiceTitle">加载中</h2>
+            </div>
+            <span id="practiceMeta" class="badge"></span>
+          </div>
+          <div class="practice-tabs" id="practiceTabs"></div>
+          <div class="prompt-card">
+            <p class="prompt-label">题目</p>
+            <p id="practicePrompt" class="prompt-text"></p>
+          </div>
+          <div id="practiceInstruction" class="practice-instruction"></div>
+          <label class="answer-label">
+            我的答案
+            <textarea id="answerInput" rows="7" placeholder="在这里完成译文、审定稿或分析..."></textarea>
+          </label>
+          <div class="practice-actions">
+            <button id="newPracticeBtn" class="ghost-button" type="button">换一题</button>
+            <button id="submitPracticeBtn" class="primary-button" type="button">提交练习</button>
+          </div>
+          <div id="feedbackPanel" class="feedback-panel" hidden>
+            <div>
+              <p class="prompt-label">参考答案</p>
+              <p id="referenceAnswer" class="feedback-text"></p>
+            </div>
+            <div>
+              <p class="prompt-label">评分重点</p>
+              <ul id="rubricList" class="rubric-list"></ul>
+            </div>
+          </div>
+        </section>
+
         <section class="panel today-panel">
           <div class="section-title">
             <div>
@@ -83,6 +117,7 @@
               错误类型
               <select id="errorInput">
                 <option value="无">无</option>
+                <option value="待复盘">待复盘</option>
                 <option value="漏译">漏译</option>
                 <option value="误译">误译</option>
                 <option value="逻辑关系">逻辑关系</option>

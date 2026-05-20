@@ -170,6 +170,113 @@ button {
   border-left: 5px solid var(--blue);
 }
 
+.practice-panel {
+  border-left: 5px solid var(--coral);
+}
+
+.practice-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.practice-tabs button {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffef9;
+  color: var(--muted);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.practice-tabs button.active {
+  border-color: var(--coral);
+  background: #fff1eb;
+  color: var(--coral);
+}
+
+.prompt-card {
+  padding: 15px;
+  border: 1px solid #efd5c8;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fff8f4, #fffef9);
+}
+
+.prompt-label {
+  display: block;
+  margin: 0 0 7px;
+  color: var(--coral);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.prompt-text {
+  margin: 0;
+  white-space: pre-line;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.practice-instruction {
+  margin: 12px 0;
+  padding: 12px;
+  border-left: 4px solid var(--gold);
+  background: #fbf4e7;
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.answer-label {
+  margin-top: 12px;
+}
+
+.practice-actions {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.feedback-panel {
+  display: grid;
+  gap: 13px;
+  margin-top: 14px;
+  padding: 15px;
+  border: 1px solid #cfe3df;
+  border-radius: 8px;
+  background: #f2fbf8;
+}
+
+.feedback-panel[hidden] {
+  display: none;
+}
+
+.feedback-text {
+  margin: 0;
+  white-space: pre-line;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.rubric-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-family: "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .section-title {
   display: flex;
   align-items: flex-start;
@@ -435,6 +542,7 @@ textarea {
   }
 
   .today-panel,
+  .practice-panel,
   .export-panel {
     grid-column: 1 / -1;
   }
