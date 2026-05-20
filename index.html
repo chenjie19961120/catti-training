@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>一级笔译训练</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="mobile-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CATTI Level 1</p>
+          <h1>一级笔译训练</h1>
+          <p class="hero-subtitle">翻译、审定稿、复习和限时训练，放进飞书手机端每天使用。</p>
+        </div>
+        <div class="score-row" aria-label="考试模型">
+          <div class="score-pill">
+            <strong>60</strong>
+            <span>翻译</span>
+          </div>
+          <div class="score-pill">
+            <strong>40</strong>
+            <span>审定稿</span>
+          </div>
+          <div class="score-pill">
+            <strong>180</strong>
+            <span>分钟</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-stack">
+        <section class="panel today-panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">今日训练</p>
+              <h2 id="todayTitle">加载中</h2>
+            </div>
+            <span id="todayQuantity" class="badge"></span>
+          </div>
+          <p id="todayExercise" class="lead"></p>
+          <div id="todayChecklist" class="checklist"></div>
+        </section>
+
+        <section class="panel timer-panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">限时训练</p>
+              <h2 id="timerDisplay">45:00</h2>
+            </div>
+          </div>
+          <div class="segmented" role="group" aria-label="选择计时长度">
+            <button data-minutes="45">45 分钟</button>
+            <button data-minutes="90">90 分钟</button>
+            <button data-minutes="180">180 分钟</button>
+          </div>
+          <button id="timerToggle" class="primary-button full-button">开始</button>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">训练记录</p>
+              <h2>提交一次练习</h2>
+            </div>
+          </div>
+          <form id="sessionForm" class="session-form">
+            <label>
+              模块
+              <select id="moduleInput" required></select>
+            </label>
+            <label>
+              标题
+              <input id="titleInput" type="text" placeholder="例如：政府工作报告节选英译汉" required />
+            </label>
+            <label>
+              得分
+              <input id="scoreInput" type="number" min="0" max="100" step="1" value="75" required />
+            </label>
+            <label>
+              错误类型
+              <select id="errorInput">
+                <option value="无">无</option>
+                <option value="漏译">漏译</option>
+                <option value="误译">误译</option>
+                <option value="逻辑关系">逻辑关系</option>
+                <option value="术语不统一">术语不统一</option>
+                <option value="表达不自然">表达不自然</option>
+                <option value="文体不匹配">文体不匹配</option>
+                <option value="时态语态">时态语态</option>
+              </select>
+            </label>
+            <label class="wide">
+              复盘备注
+              <textarea id="noteInput" rows="4" placeholder="写下错误原因、修正译文或下次注意点"></textarea>
+            </label>
+            <button class="primary-button wide" type="submit">保存并加入复习队列</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">复习系统</p>
+              <h2>到期复习</h2>
+            </div>
+            <span id="dueCount" class="badge"></span>
+          </div>
+          <div id="reviewList" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">统计</p>
+              <h2>近期表现</h2>
+            </div>
+          </div>
+          <div id="stats" class="stats"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">12 周路径</p>
+              <h2>通过导向训练</h2>
+            </div>
+          </div>
+          <div id="phaseList" class="phase-grid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">模块权重</p>
+              <h2>按考试能力重排</h2>
+            </div>
+          </div>
+          <div id="moduleList" class="module-grid"></div>
+        </section>
+
+        <section class="panel export-panel">
+          <div>
+            <p class="eyebrow">数据</p>
+            <h2>训练记录</h2>
+            <p class="lead">当前版本把记录保存在浏览器本地，后续可接飞书多维表格同步。</p>
+          </div>
+          <div class="export-actions">
+            <button id="exportBtn" class="ghost-button">导出 JSON</button>
+            <button id="resetBtn" class="danger-button">清空数据</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
